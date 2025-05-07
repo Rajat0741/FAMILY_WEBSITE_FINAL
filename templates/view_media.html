@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}View Media | Family Gallery{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="mb-6 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">{{ file_name }}</h1>
+        <a href="{{ url_for('gallery') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Gallery
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="p-4 border-b">
+            <h2 class="text-xl font-semibold">{{ "Video" if is_video else "Image" }}</h2>
+        </div>
+        
+        <div class="flex justify-center p-4 bg-gray-900">
+            {% if is_video %}
+            <!-- Video player -->
+            <video controls class="max-w-full max-h-[70vh]" preload="metadata">
+                <source src="{{ url_for('get_thumbnail', file_id=file_id) }}" type="{{ content_type }}">
+                Your browser does not support the video tag.
+            </video>
+            {% else %}
+            <!-- Image viewer -->
+            <img src="{{ url_for('get_thumbnail', file_id=file_id) }}" alt="{{ file_name }}" class="max-w-full max-h-[70vh] object-contain">
+            {% endif %}
+        </div>
+        
+        <div class="p-4 bg-gray-100 flex justify-between items-center">
+            <div>
+                <p class="text-gray-700">{{ file_name }}</p>
+            </div>
+            <div>
+                <a href="{{ url_for('download_media', file_id=file_id) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg inline-flex items-center mr-2">
+                    <i class="fas fa-download mr-2"></i> Download
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
