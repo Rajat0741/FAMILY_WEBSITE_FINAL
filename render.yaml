@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: family-gallery
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_TIMEOUT
+        value: 120
+      - key: MAX_UPLOAD_SIZE
+        value: 104857600  # 100MB for free tier
+      - key: MAX_LOGIN_ATTEMPTS
+        value: 5
+      - key: BLOCK_DURATION_HOURS
+        value: 48
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: MEMBER_PASSWORD
+        sync: false
+      - key: ROOT_FOLDER_ID
+        sync: false
+      - key: GOOGLE_SERVICE_ACCOUNT_JSON
+        sync: false
+        required: false
+      - key: MAX_CACHE_SIZE
+        value: 50  # Lower for production environments
+      - key: CACHE_EXPIRY
+        value: 3600
+      - key: MAX_API_RETRIES
+        value: 5
+      - key: MAX_DRIVE_RETRIES
+        value: 5
+    disk:
+      name: uploads
+      mountPath: /tmp/uploads
+      sizeGB: 1 

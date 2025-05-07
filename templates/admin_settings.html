@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Settings | Family Gallery{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Admin Settings</h1>
+        <a href="{{ url_for('gallery') }}" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 flex items-center">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Back to Gallery
+        </a>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Password Management</h2>
+        
+        {% if password_updated %}
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            <p>Password updated successfully!</p>
+        </div>
+        {% endif %}
+        
+        <form method="POST" action="{{ url_for('admin_settings') }}" class="space-y-4">
+            <input type="hidden" name="action" value="change_password">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="admin_password">
+                        Admin Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="admin_password" name="admin_password" 
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                               placeholder="New Admin Password" value="{{ admin_password }}">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 toggle-password" data-target="admin_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="member_password">
+                        Member Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="member_password" name="member_password" 
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                               placeholder="New Member Password" value="{{ member_password }}">
+                        <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-700 toggle-password" data-target="member_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    Update Passwords
+                </button>
+            </div>
+        </form>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">Failed Login Attempts</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            IP Address
+                        </th>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Failed Attempts
+                        </th>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ip, attempts in failed_attempts.items() %}
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-200">{{ ip }}</td>
+                        <td class="py-2 px-4 border-b border-gray-200">{{ attempts }}</td>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Warning
+                            </span>
+                        </td>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            <form method="POST" action="{{ url_for('admin_settings') }}" class="inline">
+                                <input type="hidden" name="action" value="reset_attempts">
+                                <input type="hidden" name="ip" value="{{ ip }}">
+                                <button type="submit" class="text-indigo-600 hover:text-indigo-900">Reset</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% for ip, time in blocked_ips.items() %}
+                    <tr>
+                        <td class="py-2 px-4 border-b border-gray-200">{{ ip }}</td>
+                        <td class="py-2 px-4 border-b border-gray-200">5+</td>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Blocked until {{ time.strftime('%Y-%m-%d %H:%M') }}
+                            </span>
+                        </td>
+                        <td class="py-2 px-4 border-b border-gray-200">
+                            <form method="POST" action="{{ url_for('admin_settings') }}" class="inline">
+                                <input type="hidden" name="action" value="unblock_ip">
+                                <input type="hidden" name="ip" value="{{ ip }}">
+                                <button type="submit" class="text-indigo-600 hover:text-indigo-900">Unblock</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not failed_attempts and not blocked_ips %}
+                    <tr>
+                        <td colspan="4" class="py-4 px-4 border-b border-gray-200 text-center text-gray-500">
+                            No failed login attempts recorded.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold text-gray-800 mb-4">System Settings</h2>
+        
+        <form method="POST" action="{{ url_for('admin_settings') }}" class="space-y-4">
+            <input type="hidden" name="action" value="update_settings">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="max_attempts">
+                        Max Login Attempts
+                    </label>
+                    <input type="number" id="max_attempts" name="max_attempts" min="1" max="10" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                           value="5">
+                </div>
+                
+                <div>
+                    <label class="block text-gray-700 text-sm font-bold mb-2" for="block_hours">
+                        Block Duration (hours)
+                    </label>
+                    <input type="number" id="block_hours" name="block_hours" min="1" max="72" 
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                           value="48">
+                </div>
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                    Update Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get all password toggle buttons
+        const toggleButtons = document.querySelectorAll('.toggle-password');
+        
+        // Add click event listener to each button
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Get the target input field
+                const targetId = this.getAttribute('data-target');
+                const passwordInput = document.getElementById(targetId);
+                
+                // Toggle password visibility
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    passwordInput.type = 'password';
+                    this.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+        });
+    });
+</script>
+{% endblock %} 

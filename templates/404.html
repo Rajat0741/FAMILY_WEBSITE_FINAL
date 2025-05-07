@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Page Not Found | Family Gallery{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center py-12">
+    <div class="text-center">
+        <h1 class="text-6xl font-bold text-indigo-600 mb-4">404</h1>
+        <h2 class="text-3xl font-semibold text-gray-800 mb-6">Page Not Found</h2>
+        <p class="text-gray-600 mb-8">The page you are looking for doesn't exist or has been moved.</p>
+        
+        <div class="flex justify-center">
+            <a href="{{ url_for('login') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300 inline-flex items-center">
+                <i class="fas fa-home mr-2"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

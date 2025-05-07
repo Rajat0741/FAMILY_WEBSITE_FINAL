@@ -1,0 +1,97 @@
+/* Custom styles for Family Gallery */
+
+/* Fix for aspect ratio (supported by Tailwind plugin but adding manually here) */
+.aspect-w-1 {
+    position: relative;
+    padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
+}
+
+.aspect-w-1 > * {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+.aspect-h-1 {
+    --tw-aspect-h: 1;
+}
+
+.aspect-w-1 {
+    --tw-aspect-w: 1;
+    position: relative;
+}
+
+/* Custom animation for placeholder loading */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: .5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom styling for file input */
+input[type="file"] {
+    padding: 0.5rem;
+    border: 1px dashed #d1d5db;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+}
+
+input[type="file"]:hover {
+    background-color: #f3f4f6;
+}
+
+/* Media preview hover effect */
+.group:hover .group-hover\:opacity-100 {
+    opacity: 1;
+}
+
+.group:hover .group-hover\:bg-opacity-40 {
+    --tw-bg-opacity: 0.4;
+}
+
+/* Mobile responsiveness adjustments */
+@media (max-width: 768px) {
+    .flex-wrap {
+        flex-wrap: wrap;
+    }
+    
+    .gap-3 > * {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* Additional responsive tweaks */
+@media (max-width: 640px) {
+    .grid-cols-2 > * {
+        width: 100%;
+    }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

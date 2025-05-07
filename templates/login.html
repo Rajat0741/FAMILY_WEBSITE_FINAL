@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Family Gallery{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-lg mt-10">
+    <div class="p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">Welcome to Family Gallery</h1>
+            <p class="text-gray-600 mt-2">Please select your role to continue</p>
+        </div>
+        
+        {% if error %}
+        <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+        
+        <div class="flex justify-center space-x-4 mb-8">
+            <button id="adminBtn" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                <i class="fas fa-user-shield mr-2"></i>
+                Admin
+            </button>
+            <button id="memberBtn" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 flex items-center justify-center">
+                <i class="fas fa-users mr-2"></i>
+                Member
+            </button>
+        </div>
+        
+        <form id="loginForm" method="POST" action="{{ url_for('login') }}" class="hidden">
+            <input type="hidden" id="username" name="username" value="">
+            
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">
+                    <span id="roleLabel">Password</span>
+                </label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" 
+                           class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                           placeholder="Enter your password" required>
+                    <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-600">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition duration-300">
+                    Sign In
+                </button>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <button type="button" id="backButton" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to role selection
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminBtn = document.getElementById('adminBtn');
+        const memberBtn = document.getElementById('memberBtn');
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const roleLabel = document.getElementById('roleLabel');
+        const backButton = document.getElementById('backButton');
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        // Show password toggle functionality
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+        
+        // Handle Admin button click
+        adminBtn.addEventListener('click', function() {
+            usernameInput.value = 'admin';
+            roleLabel.textContent = 'Admin Password';
+            loginForm.classList.remove('hidden');
+            adminBtn.parentElement.classList.add('hidden');
+            passwordInput.focus();
+        });
+        
+        // Handle Member button click
+        memberBtn.addEventListener('click', function() {
+            usernameInput.value = 'member';
+            roleLabel.textContent = 'Member Password';
+            loginForm.classList.remove('hidden');
+            memberBtn.parentElement.classList.add('hidden');
+            passwordInput.focus();
+        });
+        
+        // Handle Back button click
+        backButton.addEventListener('click', function() {
+            loginForm.classList.add('hidden');
+            adminBtn.parentElement.classList.remove('hidden');
+            passwordInput.value = '';
+        });
+    });
+</script>
+{% endblock %} 
